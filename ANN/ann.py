@@ -1,8 +1,8 @@
 import pandas as pd
 
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
-from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
@@ -27,6 +27,7 @@ std_sclr = StandardScaler()
 X_train = std_sclr.fit_transform(X_train)
 X_test = std_sclr.fit_transform(X_test)
 
+
 def dropout_classifier(optimizer):
     classifier = Sequential()
     classifier.add(Dense(units=6, kernel_initializer='uniform',
@@ -41,12 +42,15 @@ def dropout_classifier(optimizer):
         optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     return classifier
 
+
 classifier = KerasClassifier(build_fn=dropout_classifier)
 
-parameters = {'batch_size':[16,24,32], 'nb_epoch': [100,250,500], 
+
+parameters = {'batch_size': [16, 24, 32], 'nb_epoch': [100, 250, 500],
               'optimizer': ['Adamax', 'rmsprop', 'sgd']}
 
+
 grid_search = GridSearchCV(classifier, parameters,
-                           scoring = 'accuracy', cv=10, n_jobs=-1)
+                           scoring='accuracy', cv=10, n_jobs=-1)
 
 grid_search = grid_search.fit(X_train, y_train)
